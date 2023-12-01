@@ -2,7 +2,7 @@
 
 namespace Lib;
 
-public class Day(int dayNumber, IPart part1, IPart? part2)
+public class Day(int dayNumber, IPart part1, IPart? part2 = null)
 {
     public void Run()
     {
