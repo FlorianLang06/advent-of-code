@@ -15,12 +15,13 @@ public class Part1 : IPart
             if (line == null) {
                 break;
             }
-            char firstDigit = '\0';
-            char lastDigit = '\0';
+            char? firstDigit = null;
+            char? lastDigit = null;
             foreach (var c in line.ToCharArray()) {
                 if (char.IsNumber(c)) {
-                    if (firstDigit == '\0') {
+                    if (!firstDigit.HasValue) {
                         firstDigit = c;
+                        lastDigit = c;
                     } else {
                         lastDigit = c;
                     }
@@ -28,7 +29,7 @@ public class Part1 : IPart
             }
             string stringResult = string.Empty;
             stringResult += firstDigit;
-            stringResult += lastDigit == '\0' ? firstDigit : lastDigit;
+            stringResult += lastDigit;
             var lineResult = Int32.Parse(stringResult);
             endResult += lineResult;
         }
