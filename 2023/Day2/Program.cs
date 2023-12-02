@@ -1,1 +1,6 @@
-Console.WriteLine("###### Advent of Code 2023 Day 2 ######\n");
+using Day2;
+using Lib;
+
+var day = new Day(2, new Part1());
+
+day.Run();
