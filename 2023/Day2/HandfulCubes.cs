@@ -4,5 +4,5 @@ namespace Day2;
 
 public class HandfulCubes
 {
-    public FrozenDictionary<CubeColor, int>? Cubes { get; init; }
+    public required FrozenDictionary<CubeColor, int> Cubes { get; init; }
 }

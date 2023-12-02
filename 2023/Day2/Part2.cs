@@ -3,7 +3,7 @@ using Lib;
 
 namespace Day2;
 
-public class Part1 : IPart
+public class Part2 : IPart
 {
     public void Execute()
     {
@@ -17,15 +17,19 @@ public class Part1 : IPart
             games.Add(game);
         }
 
-        var maxCubes = new Dictionary<CubeColor, int>()
-        {
-            { CubeColor.red, 12 },
-            { CubeColor.green, 13 },
-            { CubeColor.blue, 14 }
-        }.ToFrozenDictionary();
-
-        var possibleGames = games.Where(g => g.HandfulCubesSets.All(h => h.Cubes.All(c => maxCubes[c.Key] >= c.Value)));
-        var result = possibleGames.Select(g => g.Id).Sum();
+        var result = games.Select(g =>
+            g.HandfulCubesSets.Select(h =>
+                h.Cubes.FirstOrDefault(c => c.Key == CubeColor.red).Value
+            ).Max()
+            *
+            g.HandfulCubesSets.Select(h =>
+                h.Cubes.FirstOrDefault(c => c.Key == CubeColor.green).Value
+            ).Max()
+            *
+            g.HandfulCubesSets.Select(h =>
+                h.Cubes.FirstOrDefault(c => c.Key == CubeColor.blue).Value
+            ).Max()
+        ).Sum();
         Console.WriteLine($"Result: {result}");
     }
 
@@ -56,14 +60,16 @@ public class Part1 : IPart
                 {
                     throw new InvalidCastException("Can't cast cube color");
                 }
+
                 cubeResult.Add(color, amount);
             }
+
             handfulCubesResult.Add(new HandfulCubes()
             {
                 Cubes = cubeResult.ToFrozenDictionary()
             });
         }
-        
+
         return new Game()
         {
             Id = id,
