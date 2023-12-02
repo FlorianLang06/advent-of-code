@@ -12,7 +12,7 @@ public class Day(int dayNumber, IPart part1, IPart? part2 = null)
 
         if (part2 != null)
         {
-            Console.WriteLine("\n# Part 2 ##");
+            Console.WriteLine("\n## Part 2 ##");
             part2.Execute();
         }
     }
