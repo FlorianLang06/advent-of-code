@@ -4,7 +4,7 @@ namespace Day1;
 
 public class Part1 : IPart
 {
-    public void Execute()
+    public int Execute()
     {
         using var reader = new StreamReader("./input1.txt");
 
@@ -34,6 +34,6 @@ public class Part1 : IPart
             endResult += lineResult;
         }
         
-        Console.WriteLine($"Result: {endResult}");
+        return endResult;
     }
 }

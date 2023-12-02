@@ -5,7 +5,7 @@ namespace Day2;
 
 public class Part2 : IPart
 {
-    public void Execute()
+    public int Execute()
     {
         using var reader = new StreamReader("./input.txt");
         var games = new List<Game>();
@@ -30,7 +30,7 @@ public class Part2 : IPart
                 h.Cubes.FirstOrDefault(c => c.Key == CubeColor.blue).Value
             ).Max()
         ).Sum();
-        Console.WriteLine($"Result: {result}");
+        return result;
     }
 
     private Game ReadGame(string input)

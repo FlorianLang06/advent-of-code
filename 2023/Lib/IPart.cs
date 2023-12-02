@@ -2,5 +2,5 @@
 
 public interface IPart
 {
-    void Execute();
+    int Execute();
 }

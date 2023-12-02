@@ -17,7 +17,7 @@ public class Part2 : IPart
         {"nine", '9'},
         {"zero", '0'},
     };
-    public void Execute()
+    public int Execute()
     {
         using var reader = new StreamReader("./input2.txt");
 
@@ -63,7 +63,7 @@ public class Part2 : IPart
             var lineResult = Int32.Parse(stringResult);
             endResult += lineResult;
         }
-        
-        Console.WriteLine($"Result: {endResult}");
+
+        return endResult;
     }
 }

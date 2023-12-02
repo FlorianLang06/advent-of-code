@@ -5,7 +5,7 @@ namespace Day2;
 
 public class Part1 : IPart
 {
-    public void Execute()
+    public int Execute()
     {
         using var reader = new StreamReader("./input.txt");
         var games = new List<Game>();
@@ -26,7 +26,7 @@ public class Part1 : IPart
 
         var possibleGames = games.Where(g => g.HandfulCubesSets.All(h => h.Cubes.All(c => maxCubes[c.Key] >= c.Value)));
         var result = possibleGames.Select(g => g.Id).Sum();
-        Console.WriteLine($"Result: {result}");
+        return result;
     }
 
     private Game ReadGame(string input)
