@@ -6,10 +6,10 @@ namespace Day3;
 
 public class Part1 : IPart
 {
-    private string[] _lines = new string[0];
+    private string[] _lines = Array.Empty<string>();
     public int Execute()
     {
-        var input = File.ReadAllText("./input1.txt");
+        var input = File.ReadAllText("./input.txt");
         _lines = input.Split("\n");
 
         var endResult = 0;
