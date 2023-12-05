@@ -1,4 +1,8 @@
 use std::str::Lines;
+use std::sync::{Arc, Mutex};
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::thread;
+use std::time::Duration;
 
 pub fn process(input: &str) -> u64 {
     let mut lines = input.lines();
@@ -23,8 +27,10 @@ pub fn process(input: &str) -> u64 {
 
     let mut last_value: u64 = 0;
 
-    let mut end_result = Vec::<u64>::new();
+    let end_result: Arc<Mutex<u64>> = Arc::new(Mutex::new(0u64));
+    let finished_threads = Arc::new(AtomicUsize::new(1));
 
+    let end_result_move = Arc::clone(&end_result);
     for i in 0..(seed_ranges.len() - 1) {
         let value = match seed_ranges.get(i) {
             None => return 0,
@@ -34,23 +40,46 @@ pub fn process(input: &str) -> u64 {
         if i % 2 == 0 {
             last_value = *value;
         } else {
-            let mut result = 0;
-            for seed in last_value..(last_value + value - 1) {
-                let seed_result = handle_mappings(seed, &maps);
-                if seed_result < result || result == 0 {
-                    result = seed_result;
+            let last_value = last_value.clone();
+            let value = *value;
+            let finished_threads = Arc::clone(&finished_threads);
+            let maps = maps.clone();
+            let end_result = Arc::clone(&end_result_move);
+            thread::spawn(move || {
+                let mut result = 0;
+                for seed in last_value..(last_value + value - 1) {
+                    let seed_result = handle_mappings(seed, &maps);
+                    if seed_result < result || result == 0 {
+                        result = seed_result;
+                    }
                 }
-            }
 
-            end_result.push(result);
+
+                let finished_threads_value = finished_threads.load(Ordering::Relaxed);
+                finished_threads.store(finished_threads_value + 1, Ordering::Relaxed);
+
+                let mut end_result_value = match end_result.lock() {
+                    Ok(v) => v,
+                    Err(_) => return
+                };
+
+                if *end_result_value > result || *end_result_value == 0{
+                    *end_result_value = result;
+                }
+            });
+
         }
     }
 
-
-    match end_result.iter().min() {
-        None => 0,
-        Some(min) => *min
+    while finished_threads.load(Ordering::Relaxed) < (seed_ranges.len() / 2) {
+        thread::sleep(Duration::from_millis(100));
     }
+
+    let result = match end_result.lock() {
+        Ok(v) => v.to_owned(),
+        Err(_) => return 0,
+    };
+    return result;
 }
 
 fn handle_mappings(seed: u64, maps: &Vec<Map>) -> u64 {
