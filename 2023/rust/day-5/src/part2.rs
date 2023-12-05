@@ -25,7 +25,7 @@ pub fn process(input: &str) -> u64 {
 
     let mut end_result = Vec::<u64>::new();
 
-    for i in 0..(seed_ranges.len() - 1)  {
+    for i in 0..(seed_ranges.len() - 1) {
         let value = match seed_ranges.get(i) {
             None => return 0,
             Some(v) => v,
@@ -34,19 +34,17 @@ pub fn process(input: &str) -> u64 {
         if i % 2 == 0 {
             last_value = *value;
         } else {
-            let mut seeds = Vec::<u64>::new();
+            let mut result = 0;
             for seed in last_value..(last_value + value - 1) {
-                seeds.push(seed)
+                let seed_result = handle_mappings(seed, &maps);
+                if seed_result < result || result == 0 {
+                    result = seed_result;
+                }
             }
-            let result = handle_mappings(seeds, &maps);
-            let result = match result.iter().min() {
-                None => 0,
-                Some(min) => *min
-            };
+
             end_result.push(result);
         }
     }
-
 
 
     match end_result.iter().min() {
@@ -55,22 +53,18 @@ pub fn process(input: &str) -> u64 {
     }
 }
 
-fn handle_mappings(seeds: Vec<u64>, maps: &Vec<Map>) -> Vec<u64> {
-    let mut end_result = Vec::<u64>::new();
-    for seed in seeds {
-        let mut result = seed;
-        for map in maps {
-             match map.mappings.iter().filter(|m|result >= m.source_start && m.source_start + m.length > result).next() {
-                 None => {}
-                 Some(mapping) => {
-                     let diff = result - mapping.source_start;
-                     result = mapping.destination_start + diff;
-                 }
-             };
-        }
-        end_result.push(result);
+fn handle_mappings(seed: u64, maps: &Vec<Map>) -> u64 {
+    let mut result = seed;
+    for map in maps {
+        match map.mappings.iter().filter(|m| result >= m.source_start && m.source_start + m.length > result).next() {
+            None => {}
+            Some(mapping) => {
+                let diff = result - mapping.source_start;
+                result = mapping.destination_start + diff;
+            }
+        };
     }
-    end_result
+    result
 }
 
 fn read_maps(lines: &mut Lines) -> Vec<Map> {
@@ -84,7 +78,7 @@ fn read_maps(lines: &mut Lines) -> Vec<Map> {
             None => {
                 maps.push(current_map);
                 return maps;
-            },
+            }
             Some(l) => l,
         };
         if line == "" {
@@ -125,14 +119,14 @@ fn read_maps(lines: &mut Lines) -> Vec<Map> {
         current_map.mappings.push(Mapping {
             source_start,
             destination_start,
-            length
+            length,
         })
     }
 }
 
 #[derive(Clone)]
 struct Map {
-    mappings: Vec<Mapping>
+    mappings: Vec<Mapping>,
 }
 
 impl Map {
@@ -147,5 +141,5 @@ impl Map {
 struct Mapping {
     source_start: u64,
     destination_start: u64,
-    length: u64
+    length: u64,
 }
